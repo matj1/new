@@ -86,13 +86,23 @@ object New {
 		val options = mutable.Map[String, String]()
 		val positionals = mutable.ArrayBuffer[String]()
 		val iterator = args.iterator
-		iterator.next()
+		try {
+			iterator.next()
+		} catch {
+			case e: NoSuchElementException =>
+				throw new IllegalArgumentException("The arg array is empty, there should be a program name.", e)
+		}
 
 		while (iterator.hasNext) {
 			var arg = iterator.next()
 
 			if (arg.startsWith("-")) {
-				options(arg) = iterator.next
+				try {
+					options(arg) = iterator.next()
+				} catch {
+					case e: NoSuchElementException =>
+						throw new IllegalArgumentException("The last option has no value.", e)
+				}
 			} else {
 				positionals += arg
 			}
