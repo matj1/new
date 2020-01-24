@@ -30,7 +30,7 @@ object New {
 
 		val template = parsedArgs(1)
 		val tempdir = getTempDir(template)
-		if (tempdir == null) {
+		if (tempdir == None) {
 			sys.error(s"There is no such template $template.")
 			sys.exit(ExitNotFound)
 		}
@@ -61,16 +61,16 @@ object New {
 	 * @param template template name
 	 * @return directory of the template
 	 */
-	private def getTempDir(template: String): File = {
+	private def getTempDir(template: String): Option[File] = {
 		val dir = new File(sys.env("HOME") + ".config/new/" + template)
-		if (dir.exists()) {
-			dir
+		if (dir.isDirectory) {
+			Some(dir)
 		} else {
 			val dirFallback = new File("/etc/new/" + template)
-			if (dirFallback.exists()) {
-				dirFallback
+			if (dirFallback.isDirectory) {
+				Some(dirFallback)
 			} else {
-				null
+				None
 			}
 		}
 	}
